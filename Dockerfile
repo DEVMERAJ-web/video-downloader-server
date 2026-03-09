@@ -4,8 +4,12 @@ RUN apt update && apt install -y yt-dlp
 
 WORKDIR /app
 
-COPY . .
+COPY package*.json ./
 
 RUN npm install
+
+COPY . .
+
+EXPOSE 3000
 
 CMD ["node","server.js"]
