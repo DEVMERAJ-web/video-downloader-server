@@ -17,13 +17,15 @@ app.post("/download", (req, res) => {
   exec(`yt-dlp -f "bestvideo+bestaudio/best" -g "${url}"`, (err, stdout, stderr) => {
     if (err) {
       console.log(stderr);
-      return res.json({ error: "download failed" });
+      return res.json({ error: "Download failed" });
     }
 
     res.json({ link: stdout.trim() });
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Server running on port " + PORT);
 });
