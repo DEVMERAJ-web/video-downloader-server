@@ -7,9 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Root route so Railway health check sees the server running
+// Health check route (important for Railway)
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.status(200).send("Server is running");
+});
+
+// Test route
+app.get("/ping", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 // Download route
@@ -17,21 +22,21 @@ app.post("/download", (req, res) => {
   const { url } = req.body;
 
   if (!url) {
-    return res.json({ error: "No URL provided" });
+    return res.status(400).json({ error: "No URL provided" });
   }
 
-  exec(`yt-dlp -f "bestvideo+bestaudio/best" -g "${url}"`, (err, stdout, stderr) => {
-    if (err) {
-      console.log(stderr);
-      return res.json({ error: "Download failed" });
+  exec(`yt-dlp -f best -g "${url}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(stderr);
+      return res.status(500).json({ error: "Download failed" });
     }
 
     res.json({ link: stdout.trim() });
   });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
