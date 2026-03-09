@@ -7,6 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Root route so Railway health check sees the server running
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
+// Download route
 app.post("/download", (req, res) => {
   const { url } = req.body;
 
